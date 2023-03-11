@@ -10,5 +10,8 @@ namespace ShrimplyAPI.Repositories
     {
         Shrimp GetShrimp(Guid shrimpId);
         IEnumerable<Shrimp> GetShrimps();
+        void CreateShrimp(Shrimp shrimp);
+        void UpdateShrimp(Shrimp shrimp);
+        void DeleteShrimp(Guid id);
     }
 }

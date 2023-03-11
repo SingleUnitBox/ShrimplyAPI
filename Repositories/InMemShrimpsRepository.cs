@@ -23,5 +23,22 @@ namespace ShrimplyAPI.Repositories
         {
             return shrimps.Where(shrimp => shrimp.Id == shrimpId).SingleOrDefault();
         }
+
+        public void CreateShrimp(Shrimp shrimp)
+        {
+            shrimps.Add(shrimp);
+        }
+
+        public void UpdateShrimp(Shrimp shrimp)
+        {
+            var index = shrimps.FindIndex(existingShrimp => existingShrimp.Id == shrimp.Id);
+            shrimps[index] = shrimp;
+        }
+
+        public void DeleteShrimp(Guid id)
+        {
+            var index = shrimps.FindIndex(existingShrimp => existingShrimp.Id == id);
+            shrimps.RemoveAt(index);
+        }
     }
 }
