@@ -13,8 +13,8 @@ namespace ShrimplyAPI.Controllers
     [Route("[controller]")]
     public class ShrimpsController : ControllerBase
     {
-        private readonly IInMemShrimpsRepository _shrimpsRepository;
-        public ShrimpsController(IInMemShrimpsRepository shrimpsRepository)
+        private readonly IShrimpsRepository _shrimpsRepository;
+        public ShrimpsController(IShrimpsRepository shrimpsRepository)
         {
             _shrimpsRepository = shrimpsRepository;
         }

@@ -6,7 +6,7 @@ using ShrimplyAPI.Entities;
 
 namespace ShrimplyAPI.Repositories
 {
-    public interface IInMemShrimpsRepository
+    public interface IShrimpsRepository
     {
         Shrimp GetShrimp(Guid shrimpId);
         IEnumerable<Shrimp> GetShrimps();

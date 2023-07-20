@@ -7,7 +7,7 @@ using ShrimplyAPI.Entities;
 namespace ShrimplyAPI.Repositories
 {
 
-    public class InMemShrimpsRepository : IInMemShrimpsRepository
+    public class InMemShrimpsRepository : IShrimpsRepository
     {
         private readonly List<Shrimp> shrimps = new()
         {
