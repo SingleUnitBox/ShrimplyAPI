@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ShrimplyAPI.Data;
 using ShrimplyAPI.Models.Domain;
 using ShrimplyAPI.Models.Dto;
+using ShrimplyAPI.Repository;
 
 namespace ShrimplyAPI.Controllers
 {
@@ -11,16 +12,19 @@ namespace ShrimplyAPI.Controllers
     [ApiController]
     public class FamilyController : ControllerBase
     {
+        private readonly IFamilyRepository _familyRepository;
         private readonly ShrimplyApiDbContext _shrimplyApiDbContext;
 
-        public FamilyController(ShrimplyApiDbContext shrimplyApiDbContext)
+        public FamilyController(IFamilyRepository familyRepository,
+            ShrimplyApiDbContext shrimplyApiDbContext)
         {
+            _familyRepository = familyRepository;
             _shrimplyApiDbContext = shrimplyApiDbContext;
         }
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var families = await _shrimplyApiDbContext.Families.ToListAsync();
+            var families = await _familyRepository.GetAllAsync();
 
             List<FamilyDto> familiesDto = new();
             foreach (var family in families)
@@ -41,7 +45,7 @@ namespace ShrimplyAPI.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetById([FromRoute]Guid id)
         {
-            var family = await _shrimplyApiDbContext.Families.FirstOrDefaultAsync(f => f.Id == id);
+            var family = await _familyRepository.GetByIdAsync(id);
             if (family == null)
             {
                 return NotFound();
@@ -65,8 +69,7 @@ namespace ShrimplyAPI.Controllers
                 ImageUrl = createFamilyRequestDto.ImageUrl,
             };
 
-            await _shrimplyApiDbContext.Families.AddAsync(family);
-            await _shrimplyApiDbContext.SaveChangesAsync();
+            family = await _familyRepository.CreateAsync(family);
 
             FamilyDto familyDto = new()
             {
@@ -81,16 +84,18 @@ namespace ShrimplyAPI.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> Edit([FromBody] EditFamilyRequestDto editFamilyRequestDto, [FromRoute] Guid id)
         {
-            var family = await _shrimplyApiDbContext.Families.FirstOrDefaultAsync(x => x.Id == id);
+            Family family = new()
+            {
+                Name = editFamilyRequestDto.Name,
+                Code = editFamilyRequestDto.Code,
+                ImageUrl = editFamilyRequestDto.ImageUrl,
+            };
+            family = await _familyRepository.UpdateAsync(family, id);
+
             if (family == null)
             {
                 return NotFound();
             }
-
-            family.Name = editFamilyRequestDto.Name;
-            family.Code = editFamilyRequestDto.Code;
-            family.ImageUrl = editFamilyRequestDto.ImageUrl;
-            await _shrimplyApiDbContext.SaveChangesAsync();
 
             FamilyDto familyDto = new()
             {
@@ -106,13 +111,11 @@ namespace ShrimplyAPI.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var family = await _shrimplyApiDbContext.Families.FirstOrDefaultAsync(x => x.Id == id);
+            var family = await _familyRepository.DeleteAsync(id);
             if (family == null)
             {
                 return NotFound();
             }
-            _shrimplyApiDbContext.Families.Remove(family);
-            await _shrimplyApiDbContext.SaveChangesAsync();
 
             FamilyDto familyDto = new()
             {
