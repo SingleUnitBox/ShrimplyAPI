@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShrimplyAPI.Data;
@@ -14,31 +15,22 @@ namespace ShrimplyAPI.Controllers
     {
         private readonly IFamilyRepository _familyRepository;
         private readonly ShrimplyApiDbContext _shrimplyApiDbContext;
+        private readonly IMapper _mapper;
 
         public FamilyController(IFamilyRepository familyRepository,
-            ShrimplyApiDbContext shrimplyApiDbContext)
+            ShrimplyApiDbContext shrimplyApiDbContext,
+            IMapper mapper)
         {
             _familyRepository = familyRepository;
             _shrimplyApiDbContext = shrimplyApiDbContext;
+            _mapper = mapper;
         }
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var families = await _familyRepository.GetAllAsync();
 
-            List<FamilyDto> familiesDto = new();
-            foreach (var family in families)
-            {
-                FamilyDto familyDto = new()
-                {
-                    Id = family.Id,
-                    Name = family.Name,
-                    Code = family.Code,
-                    ImageUrl = family.ImageUrl,
-                };
-                familiesDto.Add(familyDto);
-            }
-
+            List<FamilyDto> familiesDto = _mapper.Map<List<FamilyDto>>(families);
             return Ok(familiesDto);
         }
         [HttpGet]
@@ -50,46 +42,24 @@ namespace ShrimplyAPI.Controllers
             {
                 return NotFound();
             }
-            FamilyDto familyDto = new()
-            {
-                Id = family.Id,
-                Name = family.Name,
-                Code = family.Code,
-                ImageUrl = family.ImageUrl,
-            };
+            FamilyDto familyDto= _mapper.Map<FamilyDto>(family);
             return Ok(familyDto);
         }
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateFamilyRequestDto createFamilyRequestDto)
         {
-            Family family = new()
-            {
-                Name = createFamilyRequestDto.Name,
-                Code = createFamilyRequestDto.Code,
-                ImageUrl = createFamilyRequestDto.ImageUrl,
-            };
+            Family family = _mapper.Map<Family>(createFamilyRequestDto);
 
             family = await _familyRepository.CreateAsync(family);
 
-            FamilyDto familyDto = new()
-            {
-                Id = family.Id,
-                Name = family.Name,
-                Code = family.Code,
-                ImageUrl = family.ImageUrl,
-            };
+            FamilyDto familyDto = _mapper.Map<FamilyDto>(family);
             return CreatedAtAction(nameof(GetById), new { id = family.Id }, familyDto);
         }
         [HttpPut]
         [Route("{id:Guid}")]
         public async Task<IActionResult> Edit([FromBody] EditFamilyRequestDto editFamilyRequestDto, [FromRoute] Guid id)
         {
-            Family family = new()
-            {
-                Name = editFamilyRequestDto.Name,
-                Code = editFamilyRequestDto.Code,
-                ImageUrl = editFamilyRequestDto.ImageUrl,
-            };
+            Family family = _mapper.Map<Family>(editFamilyRequestDto);
             family = await _familyRepository.UpdateAsync(family, id);
 
             if (family == null)
@@ -97,13 +67,7 @@ namespace ShrimplyAPI.Controllers
                 return NotFound();
             }
 
-            FamilyDto familyDto = new()
-            {
-                Id =family.Id,
-                Name = family.Name,
-                Code = family.Code,
-                ImageUrl = family.ImageUrl,
-            };
+            FamilyDto familyDto = _mapper.Map<FamilyDto>(family);
 
             return Ok(familyDto);
         }
@@ -117,13 +81,7 @@ namespace ShrimplyAPI.Controllers
                 return NotFound();
             }
 
-            FamilyDto familyDto = new()
-            {
-                Id = family.Id,
-                Name = family.Name,
-                Code = family.Code,
-                ImageUrl = family.ImageUrl,
-            };
+            FamilyDto familyDto = _mapper.Map<FamilyDto>(family);
             return Ok(familyDto);
         }
     }

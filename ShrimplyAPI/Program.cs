@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ShrimplyAPI.Data;
+using ShrimplyAPI.Mappings;
 using ShrimplyAPI.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,9 +12,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IFamilyRepository, SqlFamilyRepository>();
+builder.Services.AddScoped<IShrimpRepository, SqlShrimpRepository>();
+
+
 
 builder.Services.AddDbContext<ShrimplyApiDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("ShrimplyApi")));
+
+builder.Services.AddAutoMapper(typeof(AutomapperProfiles));
 
 var app = builder.Build();
 
