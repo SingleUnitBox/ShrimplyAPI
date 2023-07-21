@@ -10,7 +10,9 @@ namespace ShrimplyAPI.Models.Dto
         [Required]
         public string Description { get; set; }
         public string? ImageUrl { get; set; }
+        [Required]
         public Guid FamilyId { get; set; }
+        [Required]
         public Guid DifficultyId { get; set; }
 
     }

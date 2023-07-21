@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShrimplyAPI.CustomActionFilters;
 using ShrimplyAPI.Models.Domain;
 using ShrimplyAPI.Models.Dto;
 using ShrimplyAPI.Repository;
@@ -21,6 +22,7 @@ namespace ShrimplyAPI.Controllers
             _shrimpRepository = shrimpRepository;
         }
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] CreateShrimpRequestDto createShrimpRequestDto)
         {
             Shrimp shrimp = _mapper.Map<Shrimp>(createShrimpRequestDto);
@@ -28,7 +30,7 @@ namespace ShrimplyAPI.Controllers
 
             ShrimpDto shrimpDto = _mapper.Map<ShrimpDto>(shrimp);
 
-            return Ok(shrimpDto);
+            return CreatedAtAction(nameof(GetById), new { id = shrimp.Id }, shrimp);
         }
         [HttpGet]
         public async Task<IActionResult> GetAll()
@@ -55,6 +57,7 @@ namespace ShrimplyAPI.Controllers
         }
         [HttpPut]
         [Route("{id:Guid}")]
+        [ValidateModel]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] EditShrimpRequestDto editShrimpRequestDto)
         {
             var shrimp = _mapper.Map<Shrimp>(editShrimpRequestDto);

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ShrimplyAPI.CustomActionFilters;
 using ShrimplyAPI.Data;
 using ShrimplyAPI.Models.Domain;
 using ShrimplyAPI.Models.Dto;
@@ -46,6 +47,7 @@ namespace ShrimplyAPI.Controllers
             return Ok(familyDto);
         }
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] CreateFamilyRequestDto createFamilyRequestDto)
         {
             Family family = _mapper.Map<Family>(createFamilyRequestDto);
