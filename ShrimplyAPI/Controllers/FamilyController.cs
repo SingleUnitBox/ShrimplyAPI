@@ -59,6 +59,7 @@ namespace ShrimplyAPI.Controllers
         }
         [HttpPut]
         [Route("{id:Guid}")]
+        [ValidateModel]
         public async Task<IActionResult> Edit([FromBody] EditFamilyRequestDto editFamilyRequestDto, [FromRoute] Guid id)
         {
             Family family = _mapper.Map<Family>(editFamilyRequestDto);
