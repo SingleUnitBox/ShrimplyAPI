@@ -5,6 +5,7 @@ using ShrimplyAPI.Mappings;
 using ShrimplyAPI.Repository;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,26 @@ builder.Services.AddScoped<IShrimpRepository, SqlShrimpRepository>();
 builder.Services.AddDbContext<ShrimplyApiDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("ShrimplyApi")));
 
+builder.Services.AddDbContext<ShrimplyApiAuthDbContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("ShrimplyApiAuth")));
+
 builder.Services.AddAutoMapper(typeof(AutomapperProfiles));
+
+builder.Services.AddIdentityCore<IdentityUser>()
+    .AddRoles<IdentityRole>()
+    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("ShrimplyApi")
+    .AddEntityFrameworkStores<ShrimplyApiAuthDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredUniqueChars = 0;
+    options.Password.RequiredLength = 2;
+});
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
    .AddJwtBearer(options =>
@@ -49,6 +69,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

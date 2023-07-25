@@ -5,7 +5,7 @@ namespace ShrimplyAPI.Data
 {
     public class ShrimplyApiDbContext : DbContext
     {
-        public ShrimplyApiDbContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
+        public ShrimplyApiDbContext(DbContextOptions<ShrimplyApiDbContext> dbContextOptions) : base(dbContextOptions)
         {
 
         }
