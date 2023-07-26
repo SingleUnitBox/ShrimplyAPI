@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using ShrimplyAPI.Models.Dto;
+using ShrimplyAPI.Repository;
 using System.Data;
 
 namespace ShrimplyAPI.Controllers
@@ -11,10 +13,13 @@ namespace ShrimplyAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ITokenRepository _tokenRepository;
 
-        public AuthController(UserManager<IdentityUser> userManager)
+        public AuthController(UserManager<IdentityUser> userManager,
+            ITokenRepository tokenRepository)
         {
             _userManager = userManager;
+            _tokenRepository = tokenRepository;
         }
         [HttpPost]
         [Route("Register")]
@@ -51,8 +56,14 @@ namespace ShrimplyAPI.Controllers
                 var checkPasswordResult = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
                 if (checkPasswordResult)
                 {
-                    //create token
-                    return Ok();
+                    //get roles
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (roles != null)
+                    {
+                        var jwtToken = _tokenRepository.CreateJwtToken(user, roles.ToList());
+                        var response = new LoginResponseDto { JwtToken = jwtToken };
+                        return Ok(response);
+                    }
                 }
             }
 

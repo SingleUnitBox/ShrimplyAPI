@@ -17,6 +17,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IFamilyRepository, SqlFamilyRepository>();
 builder.Services.AddScoped<IShrimpRepository, SqlShrimpRepository>();
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
 
 
 
