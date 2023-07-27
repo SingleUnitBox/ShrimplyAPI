@@ -13,7 +13,6 @@ namespace ShrimplyAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class FamilyController : ControllerBase
     {
         private readonly IFamilyRepository _familyRepository;
@@ -29,6 +28,7 @@ namespace ShrimplyAPI.Controllers
             _mapper = mapper;
         }
         [HttpGet]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetAll()
         {
             var families = await _familyRepository.GetAllAsync();
@@ -38,6 +38,7 @@ namespace ShrimplyAPI.Controllers
         }
         [HttpGet]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Reader")]
         public async Task<IActionResult> GetById([FromRoute]Guid id)
         {
             var family = await _familyRepository.GetByIdAsync(id);
@@ -50,6 +51,7 @@ namespace ShrimplyAPI.Controllers
         }
         [HttpPost]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Create([FromBody] CreateFamilyRequestDto createFamilyRequestDto)
         {
             Family family = _mapper.Map<Family>(createFamilyRequestDto);
@@ -62,6 +64,7 @@ namespace ShrimplyAPI.Controllers
         [HttpPut]
         [Route("{id:Guid}")]
         [ValidateModel]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Edit([FromBody] EditFamilyRequestDto editFamilyRequestDto, [FromRoute] Guid id)
         {
             Family family = _mapper.Map<Family>(editFamilyRequestDto);
@@ -78,6 +81,7 @@ namespace ShrimplyAPI.Controllers
         }
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var family = await _familyRepository.DeleteAsync(id);
