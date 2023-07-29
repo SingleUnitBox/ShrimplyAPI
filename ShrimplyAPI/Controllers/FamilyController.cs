@@ -28,7 +28,7 @@ namespace ShrimplyAPI.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        [Authorize(Roles = "Reader")]
+        [Authorize(Roles = "Reader,Writer")]
         public async Task<IActionResult> GetAll()
         {
             var families = await _familyRepository.GetAllAsync();

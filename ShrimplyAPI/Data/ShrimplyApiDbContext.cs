@@ -12,6 +12,7 @@ namespace ShrimplyAPI.Data
         public DbSet<Shrimp> Shrimps { get; set; }
         public DbSet<Family> Families { get; set; }
         public DbSet<Difficulty> Difficulties { get; set; }
+        public DbSet<Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
