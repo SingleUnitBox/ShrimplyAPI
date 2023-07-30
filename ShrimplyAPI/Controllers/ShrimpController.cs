@@ -5,6 +5,7 @@ using ShrimplyAPI.CustomActionFilters;
 using ShrimplyAPI.Models.Domain;
 using ShrimplyAPI.Models.Dto;
 using ShrimplyAPI.Repository;
+using System.Net;
 
 namespace ShrimplyAPI.Controllers
 {
@@ -37,7 +38,7 @@ namespace ShrimplyAPI.Controllers
             [FromQuery] string? filterOn,
             [FromQuery] string? filterQuery,
             [FromQuery] string? sortBy,
-            [FromQuery] bool? isAscending,           
+            [FromQuery] bool? isAscending,
             [FromQuery] int pageNumber = 1,
             [FromQuery] int pageSize = 1000
             )
@@ -50,6 +51,8 @@ namespace ShrimplyAPI.Controllers
                 pageNumber,
                 pageSize);
 
+            throw new Exception("this is new ex.");
+
             if (shrimps == null)
             {
                 return NoContent();
@@ -57,6 +60,7 @@ namespace ShrimplyAPI.Controllers
             List<ShrimpDto> shrimpsDto = _mapper.Map<List<ShrimpDto>>(shrimps);
             return Ok(shrimpsDto);
         }
+
         [HttpGet]
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)

@@ -8,6 +8,7 @@ using ShrimplyAPI.Data;
 using ShrimplyAPI.Models.Domain;
 using ShrimplyAPI.Models.Dto;
 using ShrimplyAPI.Repository;
+using System.Text.Json;
 
 namespace ShrimplyAPI.Controllers
 {
@@ -18,22 +19,31 @@ namespace ShrimplyAPI.Controllers
         private readonly IFamilyRepository _familyRepository;
         private readonly ShrimplyApiDbContext _shrimplyApiDbContext;
         private readonly IMapper _mapper;
+        private readonly ILogger<FamilyController> _logger;
 
         public FamilyController(IFamilyRepository familyRepository,
             ShrimplyApiDbContext shrimplyApiDbContext,
-            IMapper mapper)
+            IMapper mapper,
+            ILogger<FamilyController> logger)
         {
             _familyRepository = familyRepository;
             _shrimplyApiDbContext = shrimplyApiDbContext;
             _mapper = mapper;
+            _logger = logger;
         }
         [HttpGet]
-        [Authorize(Roles = "Reader,Writer")]
+        //[Authorize(Roles = "Reader,Writer")]
         public async Task<IActionResult> GetAll()
         {
+            _logger.LogWarning("GetAll invoked");
+            _logger.LogError("GetAll invoked");
+
+
             var families = await _familyRepository.GetAllAsync();
 
             List<FamilyDto> familiesDto = _mapper.Map<List<FamilyDto>>(families);
+
+            _logger.LogInformation($"GetAll finished {JsonSerializer.Serialize(familiesDto)}");
             return Ok(familiesDto);
         }
         [HttpGet]
