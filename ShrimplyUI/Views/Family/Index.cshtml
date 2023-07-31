@@ -1,0 +1,29 @@
+﻿@using ShrimplyUI.Models.Dto;
+
+@model IEnumerable<FamilyDto>
+
+<h1 class="mt-3">Families</h1>
+
+<div class="d-flex justify-content-end">
+    <a class="btn btn-primary" asp-action="Add">Add Family</a>
+</div>
+
+<table class="table table-bordered">
+    <thead>
+    <th>Id</th>
+    <th>Name</th>
+    <th>Code</th>
+    <th>Image Url</th>
+    </thead>
+    <tbody>
+        @foreach (var family in Model)
+        {
+            <tr>
+                <td>@family.Id</td>
+                <td>@family.Name</td>
+                <td>@family.Code</td>
+                <td>@family.ImageUrl</td>
+            </tr>
+        }
+    </tbody>
+</table>
