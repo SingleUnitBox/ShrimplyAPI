@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ShrimplyAPI.Models.Domain;
 using ShrimplyUI.Models;
 using ShrimplyUI.Models.Dto;
 using System.Text;
@@ -64,6 +63,59 @@ namespace ShrimplyUI.Controllers
                 return RedirectToAction("Index");
             }
             return View();
+        }
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            var response = await client.GetFromJsonAsync<FamilyDto>($"https://localhost:7272/api/family/{id.ToString()}");
+
+            if (response != null)
+            {
+                return View(response);
+            }
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(FamilyDto familyDto)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var httpRequestMessage = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Put,
+                RequestUri = new Uri($"https://localhost:7272/api/family/{familyDto.Id}"),
+                Content = new StringContent(JsonSerializer.Serialize(familyDto), Encoding.UTF8, "application/json"),
+            };
+
+            var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+            httpResponseMessage.EnsureSuccessStatusCode();
+
+            var response = await httpResponseMessage.Content.ReadFromJsonAsync<FamilyDto>();
+
+            if (response != null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Delete(FamilyDto familyDto)
+        {
+            try
+            {
+                var client = _httpClientFactory.CreateClient();
+                var httpResponseMessage = await client.DeleteAsync($"https://localhost:7272/api/family/{familyDto.Id}");
+
+                httpResponseMessage.EnsureSuccessStatusCode();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                //console
+            }
+
+            return View("Edit");
         }
     }
 }

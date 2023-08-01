@@ -14,6 +14,7 @@
     <th>Name</th>
     <th>Code</th>
     <th>Image Url</th>
+    <th></th>
     </thead>
     <tbody>
         @foreach (var family in Model)
@@ -23,6 +24,9 @@
                 <td>@family.Name</td>
                 <td>@family.Code</td>
                 <td>@family.ImageUrl</td>
+                <td>
+                    <a class="btn btn-secondary" asp-action="Edit" asp-controller="Family" asp-route-id="@family.Id">Edit</a>
+                </td>
             </tr>
         }
     </tbody>
